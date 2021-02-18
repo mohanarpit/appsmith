@@ -65,18 +65,15 @@ jobs:
       - name: Set the build environment based on the branch
         id: vars
         run: |
+          branch_name = $(cat ../workflow/reference)
           echo "::set-output name=REACT_APP_ENVIRONMENT::DEVELOPMENT"
-          if [[ "${{github.ref}}" == "refs/heads/master" ]]; then
+          if [[ "$branch_name" == "refs/heads/master" ]]; then
               echo "::set-output name=REACT_APP_ENVIRONMENT::PRODUCTION"
           fi
-          if [[ "${{github.ref}}" == "refs/heads/release" ]]; then
+          if [[ "$branch_name" == "refs/heads/release" ]]; then
               echo "::set-output name=REACT_APP_ENVIRONMENT::STAGING"
           fi
-          # Since this is an unreleased build, we set the version to incremented version number with
-          # a `-SNAPSHOT` suffix.
-          latest_released_version="$(git tag --list 'v*' --sort=-version:refname | head -1)"
-          echo "latest_released_version = $latest_released_version"
-          next_version="$(echo "$latest_released_version" | awk -F. -v OFS=. '{ $NF++; print }')"
+          next-version = $(cat ../workflow/next-version)
           echo "next_version = $next_version"
           echo ::set-output name=version::$next_version-SNAPSHOT
 
