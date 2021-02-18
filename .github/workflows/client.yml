@@ -77,6 +77,8 @@ jobs:
           echo "next_version = $next_version"
           echo ::set-output name=version::$next_version-SNAPSHOT
 
+          git_sha=$(cat ../workflow/git-sha)
+
       - name: Run the jest tests
         run: REACT_APP_ENVIRONMENT=${{steps.vars.outputs.REACT_APP_ENVIRONMENT}} yarn run test:unit
 
@@ -92,6 +94,7 @@ jobs:
           SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} \
           REACT_APP_VERSION_ID=${{ steps.vars.outputs.version }} \
           REACT_APP_VERSION_RELEASE_DATE=$(date -u '+%Y-%m-%dT%H:%M:%SZ') \
+          REACT_APP_SENTRY_RELEASE=${{ steps.vars.output.git_sha }}
           yarn build
 
       # Upload the build artifact so that it can be used by the test & deploy job in the workflow

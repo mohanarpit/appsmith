@@ -50,6 +50,8 @@ jobs:
           echo ${{ github.ref }} > ./workflow/reference
           # Save the github event that triggered this flow
           echo ${{ github.event_name }} > ./workflow/event-name
+          # Save the git SHA
+          echo ${GITHUB_SHA} > ./workflow/git-sha
           
           # Since this is an unreleased build, we set the version to incremented version number with
           # a `-SNAPSHOT` suffix.
