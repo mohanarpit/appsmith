@@ -31,7 +31,10 @@ jobs:
 
       - name: List the files
         run: |
-          ls -al
+          ls -al workflow/*
+          ls -al workflow/app/*
+          ls -al workflow/workflow/*
+          
           echo ${{ github.event.workflow_run.event }} 
           echo ${{ github.event.workflow_run.conclusion }} 
 
