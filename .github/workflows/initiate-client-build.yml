@@ -66,5 +66,5 @@ jobs:
         with:
           name: workflow
           path: | 
-            workflow/
-            client/
+            workflow/**
+            client/**
