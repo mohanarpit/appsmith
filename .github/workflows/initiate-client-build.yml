@@ -61,5 +61,5 @@ jobs:
         with:
           name: workflow-directory
           path: |  
-            workflow/*
             app/workflow/*
+            app/client/*
