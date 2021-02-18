@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
   workflow_run:
-    workflows: ["Appsmith Client Workflow"]
+    workflows: ["Initiate Client Build"]
     types:
       - completed
   
@@ -15,8 +15,8 @@ on:
 
 jobs:
   build:
-    if: ${{ github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    # if: ${{ github.event.workflow_run.event }} == 'pull_request' && github.event.workflow_run.conclusion == 'success' }}
     defaults:
       run:
         # working-directory: app/client
@@ -32,6 +32,8 @@ jobs:
       - name: List the files
         run: |
           ls -al
+          echo ${{ github.event.workflow_run.event }} 
+          echo ${{ github.event.workflow_run.conclusion }} 
 
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
