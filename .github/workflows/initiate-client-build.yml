@@ -61,5 +61,5 @@ jobs:
         with:
           name: workflow-directory
           path: |  
-            appsmith/app/workflow/*
-            appsmith/app/client/*
+            workflow/*
+            app/workflow/*
