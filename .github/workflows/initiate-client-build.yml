@@ -64,6 +64,6 @@ jobs:
       # This folder will be downloaded by the build workflow in order to actually build, test and package the code
       - uses: actions/upload-artifact@v2
         with:
-          name: workflow
-          path: | 
-            workflow/**
+          name: workflow-directory
+          path: |
+            workflow/
