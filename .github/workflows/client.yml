@@ -78,6 +78,7 @@ jobs:
           echo ::set-output name=version::$next_version-SNAPSHOT
 
           git_sha=$(cat ../workflow/git-sha)
+          echo ::set-output name=git_sha::$git_sha
 
       - name: Run the jest tests
         run: REACT_APP_ENVIRONMENT=${{steps.vars.outputs.REACT_APP_ENVIRONMENT}} yarn run test:unit
@@ -102,7 +103,8 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: workflow/client/build/
+          path: |
+            workflow/
 
   ui-test:
     needs: build
@@ -132,16 +134,14 @@ jobs:
           - 27017:27017
 
     steps:
-      # Checkout the code
-      - name: Checkout the merged commit from PR and base branch
-        if: github.event_name == 'pull_request_target'
-        uses: actions/checkout@v2
-        with:
-          ref: refs/pull/${{ github.event.pull_request.number }}/merge
-
-      - name: Checkout the head commit of the branch
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        uses: actions/checkout@v2
+      - name: List the files
+      run: |
+        ls -al *
+        ls -al ../*
+        cat ../workflow/reference
+        echo ${{ github.event.workflow_run }}
+        echo ${{ github.event.workflow_run.event }}
+        echo ${{ github.event.workflow_run.conclusion }} 
 
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
