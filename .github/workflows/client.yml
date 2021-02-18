@@ -16,10 +16,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # if: ${{ github.event.workflow_run.event }} == 'pull_request' && github.event.workflow_run.conclusion == 'success' }}
+    if: github.event.workflow_run.conclusion == 'success'
     defaults:
       run:
-        working-directory: workflow/client
+        working-directory: workflow
         shell: bash
 
     steps:
@@ -32,11 +32,10 @@ jobs:
       - name: List the files
         run: |
           ls -al *
+          ls -al client/*
           ls -al workflow/*
-          ls -al workflow/client/*
-          ls -al workflow/workflow/*
-          
-          echo ${{ github.event.workflow_run.event }} 
+          echo ${{ github.event.workflow_run }}
+          echo ${{ github.event.workflow_run.event }}
           echo ${{ github.event.workflow_run.conclusion }} 
 
       - name: Use Node.js 14.15.4
