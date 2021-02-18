@@ -50,16 +50,12 @@ jobs:
           echo ${{ github.ref }} > ./workflow/reference
           # Save the github event that triggered this flow
           echo ${{ github.event_name }} > ./workflow/event-name
-
-      - name: List all the folders in the path
-        run: | 
-          ls -al client/
-          ls -al workflow/
           
       # This folder will be downloaded by the build workflow in order to actually build, test and package the code
       - uses: actions/upload-artifact@v2
         with:
-          name: workflow-directory
+          retention-days: 1
+          name: workflow
           path: |  
             app/workflow/*
             app/client/*

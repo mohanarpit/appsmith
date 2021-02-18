@@ -1,26 +1,26 @@
 name: Appsmith Client Build
 
 on:
-  # workflow_run:
-  #   workflows: ["Appsmith Client Workflow"]
-  #   types:
-  #     - completed
   workflow_dispatch:
+
+  workflow_run:
+    workflows: ["Appsmith Client Workflow"]
+    types:
+      - completed
   
 # Change the working directory for all the jobs in this workflow
 defaults:
-  run:
-    working-directory: app/client
+  # run:
+  #   working-directory: app/client
 
 jobs:
   build:
+    if: ${{ github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: app/client
+        # working-directory: app/client
         shell: bash
-    
-    if: ${{ github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - uses: dawidd6/action-download-artifact@v2
@@ -29,22 +29,9 @@ jobs:
           name: workflow
           path: workflow/
 
-      # Checkout the code
-      - name: Checkout the merged commit from PR and base branch
-        if: github.event_name == 'pull_request_target'
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          ref: refs/pull/${{ github.event.pull_request.number }}/merge
-
-      - name: Checkout the head commit of the branch
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Figure out the PR number
-        run: echo ${{ github.event.pull_request.number }}
+      - name: List the files
+        run: |
+          ls -al
 
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
