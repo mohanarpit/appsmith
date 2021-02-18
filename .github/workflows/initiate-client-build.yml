@@ -58,8 +58,8 @@ jobs:
 
       - name: List all the folders in the path
         run: | 
-          ls -al ~/client/*
-          ls -al ~/workflow/*
+          ls -al ~/app/client/*
+          ls -al ~/app/workflow/*
           
       # This folder will be downloaded by the build workflow in order to actually build, test and package the code
       - uses: actions/upload-artifact@v2
