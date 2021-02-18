@@ -58,7 +58,7 @@ jobs:
 
       - name: List all the folders in the path
         run: | 
-          ls -al ~/app/*
+          ls -al ~/*
           
       # This folder will be downloaded by the build workflow in order to actually build, test and package the code
       - uses: actions/upload-artifact@v2
