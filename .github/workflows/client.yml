@@ -94,7 +94,7 @@ jobs:
           SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} \
           REACT_APP_VERSION_ID=${{ steps.vars.outputs.version }} \
           REACT_APP_VERSION_RELEASE_DATE=$(date -u '+%Y-%m-%dT%H:%M:%SZ') \
-          REACT_APP_SENTRY_RELEASE=${{ steps.vars.output.git_sha }}
+          REACT_APP_SENTRY_RELEASE=${{ steps.vars.outputs.git_sha }}
           yarn build
 
       # Upload the build artifact so that it can be used by the test & deploy job in the workflow
@@ -102,7 +102,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: app/client/build/
+          path: workflow/client/build/
 
   ui-test:
     needs: build
