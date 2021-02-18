@@ -58,12 +58,12 @@ jobs:
 
       - name: List all the folders in the path
         run: | 
-          ls -al ~/appsmith/*
+          ls -al client/
+          ls -al workflow/
           
       # This folder will be downloaded by the build workflow in order to actually build, test and package the code
       - uses: actions/upload-artifact@v2
         with:
           name: workflow
           path: | 
-            ~/appsmith/app/workflow/**
-            ~/appsmith/app/client/**
+            workflow/**
