@@ -19,7 +19,7 @@ jobs:
     # if: ${{ github.event.workflow_run.event }} == 'pull_request' && github.event.workflow_run.conclusion == 'success' }}
     defaults:
       run:
-        # working-directory: app/client
+        working-directory: workflow/client
         shell: bash
 
     steps:
@@ -31,8 +31,9 @@ jobs:
 
       - name: List the files
         run: |
+          ls -al *
           ls -al workflow/*
-          ls -al workflow/app/*
+          ls -al workflow/client/*
           ls -al workflow/workflow/*
           
           echo ${{ github.event.workflow_run.event }} 
