@@ -19,7 +19,7 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     defaults:
       run:
-        working-directory: workflow
+        working-directory: workflow/client
         shell: bash
 
     steps:
@@ -32,8 +32,8 @@ jobs:
       - name: List the files
         run: |
           ls -al *
-          ls -al client/*
-          ls -al workflow/*
+          ls -al ../*
+          ls -al ../workflow/*
           echo ${{ github.event.workflow_run }}
           echo ${{ github.event.workflow_run.event }}
           echo ${{ github.event.workflow_run.conclusion }} 
