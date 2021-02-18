@@ -1,0 +1,69 @@
+name: Appsmith Client Workflow
+
+on:
+  # This line enables manual triggering of this workflow.
+  workflow_dispatch:
+
+  push:
+    branches: [release, master]
+    # Only trigger if files have changed in this specific path
+    paths:
+      - 'app/client/**'
+      - '!app/client/cypress/manual_TestSuite/**'
+
+  pull_request:
+    branches: [release, master]
+    paths:
+      - 'app/client/**'
+      - '!app/client/cypress/manual_TestSuite/**'
+
+# Change the working directory for all the jobs in this workflow
+defaults:
+  run:
+    working-directory: app
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+        shell: bash
+
+    steps:
+
+      - name: Checkout the merged commit from PR and base branch
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: refs/pull/${{ github.event.pull_request.number }}/merge
+
+      - name: Checkout the head commit of the branch
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      # Save the details of the PR/push event to a workflow folder
+      - name: Save PR number and pass onto the build workflow
+        run: |
+          mkdir -p ./workflow
+          # Save the PR number in a file
+          echo ${{ github.event.number }} > ./workflow/pr-number
+          # Save the reference
+          echo ${{ github.ref }} > ./workflow/reference
+          # Save the github event that triggered this flow
+          echo ${{ github.event_name }} > ./workflow/event-name
+
+      - name: List all the folders in the path
+        run: | 
+          ls -al 
+          
+      # This folder will be downloaded by the build workflow in order to actually build, test and package the code
+      - uses: actions/upload-artifact@v2
+        with:
+          name: workflow
+          path: | 
+            workflow/
+            client/
