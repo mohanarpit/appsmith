@@ -149,9 +149,19 @@ jobs:
           - 27017:27017
 
     steps:
-      - name: Print the Github variables
-        run: |
-          echo "${{ toJson(github) }}"
+      # Checkout the code
+      - name: Checkout the merged commit from PR and base branch
+        if: github.event.workflow_run.event == 'pull_request'
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: refs/pull/${{ github.event.pull_request.number }}/merge
+
+      - name: Checkout the head commit of the branch
+        if: github.event.workflow_run.event == 'push' || github.event.workflow_run.event == 'workflow_dispatch'
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
