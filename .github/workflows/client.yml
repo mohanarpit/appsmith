@@ -34,8 +34,8 @@ jobs:
           ls -al *
           ls -al ../*
           cat ../workflow/reference
-          echo ${{ github.event.workflow_run.event }}
-          echo ${{ github.event.workflow_run.conclusion }} 
+          echo "Workflow Event: ${{ github.event.workflow_run.event }}"
+          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
           echo "Head branch: ${{ github.event.workflow_run.head_branch }}"
           echo "Head SHA: ${{ github.event.workflow_run.head_sha }}"
           echo "Using Python to print the workflow object"
