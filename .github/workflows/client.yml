@@ -103,8 +103,6 @@ jobs:
       # This is to ensure that we don't need to configure it in each installation
       - name: Create the bundle
         run: |
-          # Making the build file executable because permissions are lost when we package the code across workflows
-          chmod +x build.sh
           REACT_APP_ENVIRONMENT=${{steps.vars.outputs.REACT_APP_ENVIRONMENT}} \
           REACT_APP_FUSIONCHARTS_LICENSE_KEY=${{ secrets.APPSMITH_FUSIONCHARTS_LICENSE_KEY }} \
           REACT_APP_SEGMENT_CE_KEY=${{ secrets.APPSMITH_SEGMENT_CE_KEY }} \
