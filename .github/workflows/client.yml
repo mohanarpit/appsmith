@@ -19,15 +19,15 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     defaults:
       run:
-        working-directory: workflow/client
+        working-directory: app/client
         shell: bash
 
     steps:
-      - uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: ${{ github.event.workflow_run.workflow_id }}
-          name: workflow
-          path: workflow/
+      # - uses: dawidd6/action-download-artifact@v2
+      #   with:
+      #     workflow: ${{ github.event.workflow_run.workflow_id }}
+      #     name: workflow
+      #     path: workflow/
 
       - name: List the files
         run: |
@@ -42,6 +42,19 @@ jobs:
           # workflow_object=${{ github.event.workflow_run }} python -c "import os; print(os.environ)"
           echo "Using toJSON function"
           echo "${{ toJson(github) }}"
+      
+      - name: Checkout the merged commit from PR and base branch
+        if: github.workflow_run.event == 'pull_request'
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: refs/pull/${{ github.event.pull_request.number }}/merge
+
+      - name: Checkout the head commit of the branch
+        if: github.workflow_run.event == 'push' || github.workflow_run.event == 'workflow_dispatch'
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
@@ -70,19 +83,22 @@ jobs:
       - name: Set the build environment based on the branch
         id: vars
         run: |
-          branch_name=$(cat ../workflow/reference)
           echo "::set-output name=REACT_APP_ENVIRONMENT::DEVELOPMENT"
-          if [[ "$branch_name" == "refs/heads/master" ]]; then
+          if [[ "${{github.ref}}" == "refs/heads/master" ]]; then
               echo "::set-output name=REACT_APP_ENVIRONMENT::PRODUCTION"
           fi
-          if [[ "$branch_name" == "refs/heads/release" ]]; then
+          if [[ "${{github.ref}}" == "refs/heads/release" ]]; then
               echo "::set-output name=REACT_APP_ENVIRONMENT::STAGING"
           fi
-          next_version=$(cat ../workflow/next-version)
+          # Since this is an unreleased build, we set the version to incremented version number with
+          # a `-SNAPSHOT` suffix.
+          latest_released_version="$(git tag --list 'v*' --sort=-version:refname | head -1)"
+          echo "latest_released_version = $latest_released_version"
+          next_version="$(echo "$latest_released_version" | awk -F. -v OFS=. '{ $NF++; print }')"
           echo "next_version = $next_version"
           echo ::set-output name=version::$next_version-SNAPSHOT
 
-          git_sha=$(cat ../workflow/git-sha)
+          git_sha=${{ github.event.workflow_run.head_sha }}
           echo ::set-output name=git_sha::$git_sha
 
       - name: Run the jest tests
@@ -108,8 +124,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: |
-            workflow/
+          path: app/client/build/
 
   ui-test:
     needs: build
@@ -118,7 +133,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: workflow/client
+        working-directory: app/client
         shell: bash
     strategy:
       fail-fast: false
@@ -139,14 +154,9 @@ jobs:
           - 27017:27017
 
     steps:
-      - name: List the files
+      - name: Print the Github variables
         run: |
-          ls -al *
-          ls -al ../*
-          cat ../workflow/reference
-          echo ${{ github.event.workflow_run }}
-          echo ${{ github.event.workflow_run.event }}
-          echo ${{ github.event.workflow_run.conclusion }} 
+          echo "${{ toJson(github) }}"
 
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
@@ -176,31 +186,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: workflow/client/build
-
-      - name: Set the build environment based on the branch
-        id: vars
-        run: |
-
-          branch_name=$(cat ../workflow/reference)
-          echo "::set-output name=GIT_BRANCH_NAME::$branch_name"
-          
-          echo "::set-output name=REACT_APP_ENVIRONMENT::DEVELOPMENT"
-          if [[ "$branch_name" == "refs/heads/master" ]]; then
-              echo "::set-output name=REACT_APP_ENVIRONMENT::PRODUCTION"
-          fi
-          if [[ "$branch_name" == "refs/heads/release" ]]; then
-              echo "::set-output name=REACT_APP_ENVIRONMENT::STAGING"
-          fi
-          next_version=$(cat ../workflow/next-version)
-          echo "next_version = $next_version"
-          echo ::set-output name=version::$next_version-SNAPSHOT
-
-          git_sha=$(cat ../workflow/git-sha)
-          echo ::set-output name=git_sha::$git_sha
+          path: app/client/build
 
       - name: Pull release server docker container and start it locally
-        if: ${{ steps.vars.outputs.GIT_BRANCH_NAME }} == 'refs/heads/release'
+        if: github.ref == 'refs/heads/release'
         shell: bash
         run: |
           echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
@@ -217,7 +206,7 @@ jobs:
             ${{ secrets.DOCKER_HUB_ORGANIZATION }}/appsmith-server:release
 
       - name: Pull master server docker container and start it locally
-        if: ${{ steps.vars.outputs.GIT_BRANCH_NAME }} == 'refs/heads/master'
+        if: github.ref == 'refs/heads/master'
         shell: bash
         run: |
           echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
@@ -280,8 +269,8 @@ jobs:
           group: "Electrons on Github Action"
           spec: "cypress/integration/Smoke_TestSuite/*/*"
           working-directory: app/client
-          # tag will be either "push" or "pull_request_target"
-          tag: ${{ github.event_name }}
+          # tag will be either "push" or "workflow_run"
+          tag: ${{ github.event.workflow_run.event }}
           env: "NODE_ENV=development"
 
       # Upload the screenshots as artifacts if there's a failure
@@ -303,13 +292,13 @@ jobs:
     steps:
       # Checkout the code
       - name: Checkout the merged commit from PR and base branch
-        if: github.event_name == 'pull_request_target'
+        if: github.workflow_run.event == 'pull_request'
         uses: actions/checkout@v2
         with:
           ref: refs/pull/${{ github.event.pull_request.number }}/merge
 
       - name: Checkout the head commit of the branch
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        if: github.workflow_run.event == 'push' || github.workflow_run.event == 'workflow_dispatch'
         uses: actions/checkout@v2
 
       - name: Download the react build artifact
