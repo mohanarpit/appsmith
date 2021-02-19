@@ -28,16 +28,6 @@ jobs:
       #     workflow: ${{ github.event.workflow_run.workflow_id }}
       #     name: workflow
       #     path: workflow/
-      - name: Print env variables
-        run: |
-          echo "Workflow Event: ${{ github.event.workflow_run.event }}"
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          echo "Head branch: ${{ github.event.workflow_run.head_branch }}"
-          echo "Head SHA: ${{ github.event.workflow_run.head_sha }}"
-          # echo "Using Python to print the workflow object"
-          # workflow_object=${{ github.event.workflow_run }} python -c "import os; print(os.environ)"
-          echo "Using toJSON function"
-          echo "${{ toJson(github) }}"
       
       - name: Checkout the merged commit from PR and base branch
         if: github.workflow_run.event == 'pull_request'
@@ -51,6 +41,15 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      
+      - name: Print env variables
+        run: |
+          echo "Workflow Event: ${{ github.event.workflow_run.event }}"
+          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
+          echo "Head branch: ${{ github.event.workflow_run.head_branch }}"
+          echo "Head SHA: ${{ github.event.workflow_run.head_sha }}"
+          echo "Using toJSON function"
+          echo "${{ toJson(github) }}"
 
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
