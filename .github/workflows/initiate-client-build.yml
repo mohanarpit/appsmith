@@ -40,6 +40,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: List the files
+        run: |
+          echo "Using toJSON function"
+          echo ${{ toJson(github) }}
+          
       # Save the details of the PR/push event to a workflow folder
       - name: Save PR number and pass onto the build workflow
         run: |
@@ -52,7 +57,7 @@ jobs:
           echo ${{ github.event_name }} > ./workflow/event-name
           # Save the git SHA
           echo ${GITHUB_SHA} > ./workflow/git-sha
-          
+
           # Since this is an unreleased build, we set the version to incremented version number with
           # a `-SNAPSHOT` suffix.
           latest_released_version="$(git tag --list 'v*' --sort=-version:refname | head -1)"

@@ -38,10 +38,11 @@ jobs:
           echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
           echo "Head branch: ${{ github.event.workflow_run.head_branch }}"
           echo "Head SHA: ${{ github.event.workflow_run.head_sha }}"
-          echo "Using Python to print the workflow object"
-          workflow_object=${{ github.event.workflow_run }} python -c "import os; print(os.environ)"
+          # echo "Using Python to print the workflow object"
+          # workflow_object=${{ github.event.workflow_run }} python -c "import os; print(os.environ)"
           echo "Using toJSON function"
-          echo ${{ toJson(github.event.workflow) }}
+          echo ${{ toJson(github) }}
+
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
         with:
