@@ -135,13 +135,13 @@ jobs:
 
     steps:
       - name: List the files
-      run: |
-        ls -al *
-        ls -al ../*
-        cat ../workflow/reference
-        echo ${{ github.event.workflow_run }}
-        echo ${{ github.event.workflow_run.event }}
-        echo ${{ github.event.workflow_run.conclusion }} 
+        run: |
+          ls -al *
+          ls -al ../*
+          cat ../workflow/reference
+          echo ${{ github.event.workflow_run }}
+          echo ${{ github.event.workflow_run.event }}
+          echo ${{ github.event.workflow_run.conclusion }} 
 
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
