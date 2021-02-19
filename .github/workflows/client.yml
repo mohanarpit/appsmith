@@ -19,7 +19,7 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     defaults:
       run:
-        working-directory: app/client
+        # working-directory: workflow/client
         shell: bash
 
     steps:

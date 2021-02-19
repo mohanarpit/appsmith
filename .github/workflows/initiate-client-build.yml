@@ -40,10 +40,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: List the files
-        run: |
-          echo "Using toJSON function"
-          echo "${{ toJson(github) }}"
+      # - name: List the files
+      #   run: |
+      #     echo "Using toJSON function"
+      #     echo "${{ toJson(github) }}"
           
       # Save the details of the PR/push event to a workflow folder
       - name: Save PR number and pass onto the build workflow
