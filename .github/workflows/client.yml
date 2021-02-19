@@ -34,9 +34,12 @@ jobs:
           ls -al *
           ls -al ../*
           cat ../workflow/reference
-          echo ${{ github.event.workflow_run }}
           echo ${{ github.event.workflow_run.event }}
           echo ${{ github.event.workflow_run.conclusion }} 
+          echo "Head branch: ${{ github.event.workflow_run.head_branch }}"
+          echo "Head SHA: ${{ github.event.workflow_run.head_sha }}"
+          echo "Using Python to print the workflow object"
+          workflow_object=${{ github.event.workflow_run }} python -c "import os; print(os.environ['workflow_object'])"
 
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
@@ -171,10 +174,31 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: app/client/build
+          path: workflow/client/build
+
+      - name: Set the build environment based on the branch
+        id: vars
+        run: |
+
+          branch_name=$(cat ../workflow/reference)
+          echo "::set-output name=GIT_BRANCH_NAME::$branch_name"
+          
+          echo "::set-output name=REACT_APP_ENVIRONMENT::DEVELOPMENT"
+          if [[ "$branch_name" == "refs/heads/master" ]]; then
+              echo "::set-output name=REACT_APP_ENVIRONMENT::PRODUCTION"
+          fi
+          if [[ "$branch_name" == "refs/heads/release" ]]; then
+              echo "::set-output name=REACT_APP_ENVIRONMENT::STAGING"
+          fi
+          next_version=$(cat ../workflow/next-version)
+          echo "next_version = $next_version"
+          echo ::set-output name=version::$next_version-SNAPSHOT
+
+          git_sha=$(cat ../workflow/git-sha)
+          echo ::set-output name=git_sha::$git_sha
 
       - name: Pull release server docker container and start it locally
-        if: github.ref == 'refs/heads/release'
+        if: ${{ steps.vars.outputs.GIT_BRANCH_NAME }} == 'refs/heads/release'
         shell: bash
         run: |
           echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
@@ -191,7 +215,7 @@ jobs:
             ${{ secrets.DOCKER_HUB_ORGANIZATION }}/appsmith-server:release
 
       - name: Pull master server docker container and start it locally
-        if: github.ref == 'refs/heads/master'
+        if: ${{ steps.vars.outputs.GIT_BRANCH_NAME }} == 'refs/heads/master'
         shell: bash
         run: |
           echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
