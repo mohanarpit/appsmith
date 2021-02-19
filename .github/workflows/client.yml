@@ -29,14 +29,14 @@ jobs:
           name: workflow
           path: workflow/
       
-      - name: Print env variables
-        run: |
-          echo "Workflow Event: ${{ github.event.workflow_run.event }}"
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          echo "Head branch: ${{ github.event.workflow_run.head_branch }}"
-          echo "Head SHA: ${{ github.event.workflow_run.head_sha }}"
-          echo "Using toJSON function"
-          echo "${{ toJson(github) }}"
+      # - name: Print env variables
+      #   run: |
+      #     echo "Workflow Event: ${{ github.event.workflow_run.event }}"
+      #     echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
+      #     echo "Head branch: ${{ github.event.workflow_run.head_branch }}"
+      #     echo "Head SHA: ${{ github.event.workflow_run.head_sha }}"
+      #     echo "Using toJSON function"
+      #     echo "${{ toJson(github) }}"
 
       - name: Checkout the merged commit from PR and base branch
         if: github.workflow_run.event == 'pull_request'
