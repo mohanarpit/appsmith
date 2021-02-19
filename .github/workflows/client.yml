@@ -41,7 +41,7 @@ jobs:
           # echo "Using Python to print the workflow object"
           # workflow_object=${{ github.event.workflow_run }} python -c "import os; print(os.environ)"
           echo "Using toJSON function"
-          echo ${{ toJson(github) }}
+          echo "${{ toJson(github) }}"
 
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
