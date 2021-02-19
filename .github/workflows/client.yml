@@ -28,12 +28,11 @@ jobs:
       #     workflow: ${{ github.event.workflow_run.workflow_id }}
       #     name: workflow
       #     path: workflow/
-
-      - name: List the files
+      - name: Print env variables
         run: |
-          ls -al *
-          ls -al ../*
-          cat ../workflow/reference
+          # ls -al *
+          # ls -al ../*
+          # cat ../workflow/reference
           echo "Workflow Event: ${{ github.event.workflow_run.event }}"
           echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
           echo "Head branch: ${{ github.event.workflow_run.head_branch }}"
