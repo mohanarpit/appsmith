@@ -83,6 +83,9 @@ curl -k --request POST -v 'https://dev.appsmith.com/api/v1/users' \
 	"password": "'"$CYPRESS_TESTPASSWORD2"'"
 }'
 
+echo "Installing cypress"
+npx cypress install && npx cypress cache list
+
 # DEBUG=cypress:* $(npm bin)/cypress version
 # sed -i -e "s|api_url:.*$|api_url: $CYPRESS_URL|g" /github/home/.cache/Cypress/4.1.0/Cypress/resources/app/packages/server/config/app.yml
 # cat /github/home/.cache/Cypress/4.1.0/Cypress/resources/app/packages/server/config/app.yml
