@@ -84,7 +84,7 @@ jobs:
             '~/.npm'
           key: ${{ runner.OS }}-node14.15.4-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.OS }}-nodenode14.15.4-
+            ${{ runner.OS }}-node14.15.4-
             ${{ runner.OS }}-
 
       # Install all the dependencies
