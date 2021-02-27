@@ -66,11 +66,14 @@ jobs:
           echo "next_version = $next_version"
           echo $next_version-SNAPSHOT > ./workflow/next-version
 
-
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
         with:
           node-version: "14.15.4"
+      
+      - name: Get yarn cache directory path
+        id: yarn-dep-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
 
       # Retrieve npm dependencies from cache. After a successful run, these dependencies are cached again
       - name: Cache npm dependencies
@@ -78,18 +81,14 @@ jobs:
         env:
           cache-name: cache-yarn-dependencies
         with:
-          # Node dependencies are stored in `./node_modules` on Linux/macOS
-          path: |
-            '**/node_modules'
-            '~/.npm'
-          key: ${{ runner.OS }}-node14.15.4-${{ hashFiles('**/yarn.lock') }}
+          path: ${{ steps.yarn-dep-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-dep-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.OS }}-node14.15.4-
-            ${{ runner.OS }}-
+            ${{ runner.os }}-yarn-dep-
 
       # Install all the dependencies
       - name: Install dependencies
-        run: yarn install --prefer-offline
+        run: yarn install --prefer-offline --frozen-lockfile
 
       - name: Set the build environment based on the branch
         id: vars

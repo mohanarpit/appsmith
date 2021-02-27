@@ -97,6 +97,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "14.15.4"
+     
+      - name: Get yarn cache directory path
+        id: yarn-dep-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
 
       # Retrieve npm dependencies from cache. After a successful run, these dependencies are cached again
       - name: Cache npm dependencies
@@ -104,14 +108,10 @@ jobs:
         env:
           cache-name: cache-yarn-dependencies
         with:
-          # Node dependencies are stored in `./node_modules` on Linux/macOS
-          path: |
-            '**/node_modules'
-            '~/.npm'
-          key: ${{ runner.OS }}-node14.15.4-${{ hashFiles('**/yarn.lock') }}
+          path: ${{ steps.yarn-dep-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-dep-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.OS }}-node14.15.4-
-            ${{ runner.OS }}-
+            ${{ runner.os }}-yarn-dep-
 
       # Install all the dependencies
       # - name: Install dependencies
@@ -136,7 +136,7 @@ jobs:
             --env APPSMITH_CLOUD_SERVICES_BASE_URL= \
             --env APPSMITH_CLOUD_SERVICES_USERNAME= \
             --env APPSMITH_CLOUD_SERVICES_PASSWORD= \
-            ${{ secrets.DOCKER_HUB_ORGANIZATION }}/appsmith-server:release
+            appsmith/appsmith-server:release
 
       - name: Pull master server docker container and start it locally
         if: github.ref == 'refs/heads/master'
@@ -151,7 +151,7 @@ jobs:
             --env APPSMITH_CLOUD_SERVICES_BASE_URL= \
             --env APPSMITH_CLOUD_SERVICES_USERNAME= \
             --env APPSMITH_CLOUD_SERVICES_PASSWORD= \
-            ${{ secrets.DOCKER_HUB_ORGANIZATION }}/appsmith-server:nightly
+            appsmith/appsmith-server:nightly
 
       - name: Installing Yarn serve
         run: |
