@@ -77,6 +77,7 @@ jobs:
 
       # Retrieve npm dependencies from cache. After a successful run, these dependencies are cached again
       - name: Cache npm dependencies
+        id: yarn-dep-cache
         uses: actions/cache@v2
         env:
           cache-name: cache-yarn-dependencies
@@ -88,6 +89,7 @@ jobs:
 
       # Install all the dependencies
       - name: Install dependencies
+        if: steps.yarn-dep-cache.outputs.cache-hit != 'true'
         run: yarn install --prefer-offline --frozen-lockfile
 
       - name: Setup Yarn build cache
