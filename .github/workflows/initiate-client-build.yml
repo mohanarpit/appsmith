@@ -48,15 +48,15 @@ jobs:
       # Save the details of the PR/push event to a workflow folder
       - name: Save PR number and pass onto the build workflow
         run: |
-          mkdir -p ./workflow
+          mkdir -p ./workflow-details
           # Save the PR number in a file
-          echo ${{ github.event.number }} > ./workflow/pr-number
+          echo ${{ github.event.number }} > ./workflow-details/pr-number
           # Save the reference
-          echo ${{ github.ref }} > ./workflow/reference
+          echo ${{ github.ref }} > ./workflow-details/reference
           # Save the github event that triggered this flow
-          echo ${{ github.event_name }} > ./workflow/event-name
+          echo ${{ github.event_name }} > ./workflow-details/event-name
           # Save the git SHA
-          echo ${GITHUB_SHA} > ./workflow/git-sha
+          echo ${GITHUB_SHA} > ./workflow-details/git-sha
 
           # Since this is an unreleased build, we set the version to incremented version number with
           # a `-SNAPSHOT` suffix.
@@ -64,7 +64,7 @@ jobs:
           echo "latest_released_version = $latest_released_version"
           next_version="$(echo "$latest_released_version" | awk -F. -v OFS=. '{ $NF++; print }')"
           echo "next_version = $next_version"
-          echo $next_version-SNAPSHOT > ./workflow/next-version
+          echo $next_version-SNAPSHOT > ./workflow-details/next-version
 
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
@@ -150,8 +150,9 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           retention-days: 1
-          name: workflow
+          name: workflow-package
           path: |  
-            app/client/workflow/*
+            app/client/workflow-details/*
             app/client/build/*
             app/client/cypress/*
+            app/client/docker/*
