@@ -89,7 +89,6 @@ jobs:
 
       # Install all the dependencies
       - name: Install dependencies
-        if: steps.yarn-dep-cache.outputs.cache-hit != 'true'
         run: yarn install --prefer-offline --frozen-lockfile
 
       - name: Setup Yarn build cache
