@@ -165,3 +165,4 @@ jobs:
             app/client/build/*
             app/client/cypress/*
             app/client/docker/*
+            app/client/node_modules/*
