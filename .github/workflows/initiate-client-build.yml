@@ -138,7 +138,7 @@ jobs:
       # This is to ensure that we don't need to configure it in each installation
       # Also, since the build already exists, we don't need to build the code again
       - name: Create the bundle
-        # if: steps.yarn-build-cache.outputs.cache-hit != 'true'
+        if: steps.yarn-build-cache.outputs.cache-hit != 'true'
         run: |
           REACT_APP_ENVIRONMENT=${{steps.vars.outputs.REACT_APP_ENVIRONMENT}} \
           REACT_APP_FUSIONCHARTS_LICENSE_KEY=${{ secrets.APPSMITH_FUSIONCHARTS_LICENSE_KEY }} \
