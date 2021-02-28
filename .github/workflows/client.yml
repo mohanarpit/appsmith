@@ -42,16 +42,6 @@ jobs:
           workflow: ${{ github.event.workflow_run.workflow_id }}
           name: workflow-package
           path: workflow-package/
-      
-      - name: Print env variables
-        run: |
-          echo "Workflow Event: ${{ github.event.workflow_run.event }}"
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          echo "Head branch: ${{ github.event.workflow_run.head_branch }}"
-          echo "Head SHA: ${{ github.event.workflow_run.head_sha }}"
-          echo "Using toJSON function"
-          echo "${{ toJson(github) }}"
-          ls -al
 
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
@@ -82,6 +72,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nodemodules-
 
+      - name: Print env variables
+        run: |
+          echo "Workflow Event: ${{ github.event.workflow_run.event }}"
+          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
+          echo "Head branch: ${{ github.event.workflow_run.head_branch }}"
+          echo "Head SHA: ${{ github.event.workflow_run.head_sha }}"
+          echo "Using toJSON function"
+          echo "${{ toJson(github) }}"
+          ls -al
+          
       - name: Pull release server docker container and start it locally
         if: github.ref == 'refs/heads/release'
         shell: bash

@@ -149,13 +149,6 @@ jobs:
           REACT_APP_SENTRY_RELEASE=${{ steps.vars.outputs.git_sha }}
           yarn build
 
-      # Upload the build artifact so that it can be used by the test & deploy job in the workflow
-      # - name: Upload react build bundle
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: build
-      #     path: app/client/build/
-
       # This folder will be downloaded by the build workflow in order to actually build, test and package the code
       - uses: actions/upload-artifact@v2
         with:
@@ -166,4 +159,3 @@ jobs:
             app/client/build/*
             app/client/cypress/*
             app/client/docker/*
-            app/client/node_modules/*
