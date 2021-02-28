@@ -130,9 +130,13 @@ jobs:
         id: yarn-build-cache
         with:
           path: ./build/
-          key: ${{ runner.os }}-yarn-bcache-${{ hashFiles('src/') }}
+          key: ${{ runner.os }}-yarn-client-build-cache-${{ hashFiles('src/') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-bcache
+            ${{ runner.os }}-yarn-client-build-cache
+      
+      - name: Print env variables
+        run: |
+          ls -al
 
       # We burn React environment & the Segment analytics key into the build itself.
       # This is to ensure that we don't need to configure it in each installation
