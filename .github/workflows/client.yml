@@ -158,7 +158,6 @@ jobs:
           parallel: true
           group: "Electrons on Github Action"
           spec: "cypress/integration/Smoke_TestSuite/*/*"
-          working-directory: workflow-package/
           # tag will be either "push" or "workflow_run"
           tag: ${{ github.event.workflow_run.event }}
           env: "NODE_ENV=development"
