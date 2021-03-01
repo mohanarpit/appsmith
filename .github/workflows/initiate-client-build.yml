@@ -167,3 +167,4 @@ jobs:
             app/client/build/*
             app/client/cypress/*
             app/client/docker/*
+            app/client/cypress.json
