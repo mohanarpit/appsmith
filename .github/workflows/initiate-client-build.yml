@@ -92,10 +92,10 @@ jobs:
         id: cache-node-modules
         uses: actions/cache@v2
         with:
-          path: ./node_modules
-          key: ${{ runner.os }}-node14-modules-${{ hashFiles('**/yarn.lock') }}
+          path: ./node_modules/
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-node14-modules-
+            ${{ runner.os }}-node-modules-
       
       - name: Print env variables
         run: |
