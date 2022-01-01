@@ -97,7 +97,7 @@ jobs:
           echo "next_version = $next_version"
           echo ::set-output name=version::$next_version-SNAPSHOT
 
-        # - name: Run the jest tests
+      - name: Run the jest tests
         if: github.event_name == 'pull_request'
         uses: hetunandu/Jest-Coverage-Diff@feature/better-report-comments
         with:
