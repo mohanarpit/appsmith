@@ -135,28 +135,9 @@ jobs:
       #     AWS_REGION: "ap-south-1"
       #     SOURCE_DIR: "app/client/build"
       #     DEST_DIR: ${{ github.event.pull_request.number }}/
-
-      # - name: Deploy preview success message
-      #   if: success()
-      #   uses: unsplash/comment-on-pr@master
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     check_for_duplicate_msg: true
-      #     duplicate_msg_pattern: "[Deploy preview ready]"
-      #     msg: |
-      #       Deploy preview ready!
-      #       https://${{ github.event.pull_request.number }}.preview.appsmith.com
-      #       built from ${{ github.sha }}
-      # - name: Set deployment status
-      #   uses: pbrandone/create-status-action@master
-      #   if: success()
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     state: success
-      #     description: Deploy preview ready!
-      #     url: https://${{ github.event.pull_request.number }}.preview.appsmith.com
-      #     context: Deploy preview
+      - name: Simulate failure
+        run: |
+          exit(1);
 
       - name: Deploy preview status
         uses: ouzi-dev/commit-status-updater@v1.1.0
@@ -165,7 +146,7 @@ jobs:
           status: "${{ job.status }}"
           successComment: "Deploy preview ready!"
           failComment: "Failed to create deploy preview"
-          description: Appsmith client deploy preview
+          description: Deployment has been completed
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: Deploy preview
+          name: Deploy preview ready!
           url: https://${{ github.event.pull_request.number }}.preview.appsmith.com
