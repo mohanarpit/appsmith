@@ -148,11 +148,22 @@ jobs:
       #       Deploy preview ready!
       #       https://${{ github.event.pull_request.number }}.preview.appsmith.com
       #       built from ${{ github.sha }}
-      - name: Set deployment status
-        uses: pbrandone/create-status-action@master
+      # - name: Set deployment status
+      #   uses: pbrandone/create-status-action@master
+      #   if: success()
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     state: success
+      #     description: Deploy preview ready!
+      #     url: https://${{ github.event.pull_request.number }}.preview.appsmith.com
+      #     context: Deploy preview
+
+      - name: Deploy preview status
+        uses: ouzi-dev/commit-status-updater@v1.1.0
+        if: always()
         with:
+          status: "${{ job.status }}"
+          successComment: "Deploy preview ready!"
+          failComment: "Failed to create deploy preview"
+          description: Description of the deploy preview
           token: ${{ secrets.GITHUB_TOKEN }}
-          state: success
-          description: Deploy preview ready!
-          url: https://${{ github.event.pull_request.number }}.preview.appsmith.com
-          context: Deploy preview
