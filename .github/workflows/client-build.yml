@@ -165,5 +165,7 @@ jobs:
           status: "${{ job.status }}"
           successComment: "Deploy preview ready!"
           failComment: "Failed to create deploy preview"
-          description: Description of the deploy preview
+          description: Appsmith client deploy preview
           token: ${{ secrets.GITHUB_TOKEN }}
+          name: Deploy preview
+          url: https://${{ github.event.pull_request.number }}.preview.appsmith.com
