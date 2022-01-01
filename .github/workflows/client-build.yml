@@ -53,6 +53,15 @@ jobs:
       - name: Figure out the PR number
         run: echo ${{ github.event.pull_request.number }}
 
+      - name: Set the deploy preview status to pending
+        uses: ouzi-dev/commit-status-updater@v1.1.0
+        if: always()
+        with:
+          description: Deployment in progress...
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Deploy preview ready!
+          url: https://${{ github.event.pull_request.number }}.preview.appsmith.com
+
       - name: Use Node.js 14.15.4
         uses: actions/setup-node@v1
         with:
@@ -136,7 +145,7 @@ jobs:
           SOURCE_DIR: "app/client/build"
           DEST_DIR: ${{ github.event.pull_request.number }}/
 
-      - name: Set the deploy preview status
+      - name: Set the deploy preview status to final status
         uses: ouzi-dev/commit-status-updater@v1.1.0
         if: always()
         with:
