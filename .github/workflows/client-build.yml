@@ -149,9 +149,10 @@ jobs:
       #       https://${{ github.event.pull_request.number }}.preview.appsmith.com
       #       built from ${{ github.sha }}
       - name: Set deployment status
-        uses: pbrandone/create-status-action@v1
+        uses: pbrandone/create-status-action@master
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           state: success()
           description: Deploy preview ready!
           url: https://${{ github.event.pull_request.number }}.preview.appsmith.com
+          context: Deploy preview
