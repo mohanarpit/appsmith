@@ -152,7 +152,7 @@ jobs:
         uses: pbrandone/create-status-action@master
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          state: success()
+          state: success
           description: Deploy preview ready!
           url: https://${{ github.event.pull_request.number }}.preview.appsmith.com
           context: Deploy preview
