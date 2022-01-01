@@ -142,6 +142,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          check_for_duplicate_msg: true
+          duplicate_msg_pattern: "[Deploy preview ready]"
           msg: |
             Deploy preview ready!
             https://${{ github.event.pull_request.number }}.preview.appsmith.com
