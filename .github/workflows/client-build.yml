@@ -122,3 +122,27 @@ jobs:
         with:
           name: build
           path: app/client/build/
+
+      - name: Upload the artifact to S3 for deploy previews
+        if: success()
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --delete
+        env:
+          AWS_S3_BUCKET: deploy-preview.appsmith.com # Could also come from github secrets
+          AWS_ACCESS_KEY_ID: ${{ secrets.DEPLOY_PREVIEW_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DEPLOY_PREVIEW_SECRET }}
+          AWS_REGION: "ap-south-1"
+          SOURCE_DIR: "app/client/build"
+          DEST_DIR: ${{ github.event.pull_request.number }}/
+
+      - name: Deploy preview success message
+        if: success()
+        uses: unsplash/comment-on-pr@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          msg: |
+            Deploy preview ready!
+            https://${{ github.event.pull_request.number }}.preview.appsmith.com
+            built from ${{ github.sha }}
