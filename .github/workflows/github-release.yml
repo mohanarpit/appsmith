@@ -44,7 +44,7 @@ jobs:
     needs:
       - prelude
 
-    runs-on: buildjet-8vcpu-ubuntu-2004
+    runs-on: ubuntu-latest
 
     defaults:
       run:
@@ -56,6 +56,15 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
+      - name: Echo the variable
+        run: |
+          echo ${{ needs.prelude.outputs.is_beta }}
+
+      - name: Echo the variable
+        if: needs.prelude.outputs.is_beta == 'false'
+        run: |
+          echo "This is not beta. Can build latest images"
 
       - name: Use Node.js 16.14.0
         uses: actions/setup-node@v1
@@ -240,7 +249,7 @@ jobs:
 
       # Only build & tag with latest if the tag doesn't contain beta
       - name: Build and push client image latest
-        if: contains(needs.prelude.outputs.tag, 'beta') == 'false'
+        if: needs.prelude.outputs.is_beta == 'false'
         uses: depot/build-push-action@v1
         with:
           context: app/client
@@ -261,7 +270,7 @@ jobs:
 
       # Only build & tag with latest if the tag doesn't contain beta
       - name: Build and push fat image latest
-        if: contains(needs.prelude.outputs.tag, 'beta') == 'false'
+        if: needs.prelude.outputs.is_beta == 'false'
         uses: depot/build-push-action@v1
         with:
           context: .
@@ -284,7 +293,7 @@ jobs:
 
       # Only build & tag with latest if the tag doesn't contain beta
       - name: Build and push server image latest
-        if: contains(needs.prelude.outputs.tag, 'beta') == 'false'
+        if: needs.prelude.outputs.is_beta == 'false'
         uses: depot/build-push-action@v1
         with:
           context: app/server
@@ -305,7 +314,7 @@ jobs:
 
       # Only build & tag with latest if the tag doesn't contain beta
       - name: Build and push RTS image latest
-        if: contains(needs.prelude.outputs.tag, 'beta') == 'false'
+        if: needs.prelude.outputs.is_beta == 'false'
         uses: depot/build-push-action@v1
         with:
           context: app/rts
