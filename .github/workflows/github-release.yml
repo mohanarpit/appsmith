@@ -57,15 +57,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Echo the variable
-        run: |
-          echo ${{ needs.prelude.outputs.is_beta }}
-
-      - name: Echo the variable
-        if: needs.prelude.outputs.is_beta == 'false'
-        run: |
-          echo "This is not beta. Can build latest images"
-
       - name: Use Node.js 16.14.0
         uses: actions/setup-node@v1
         with:
